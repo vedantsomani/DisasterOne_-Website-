@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}MFA Verification{% endblock %}
+{% block content %}
+<div class="mt-5">
+  <h2>MFA Verification</h2>
+  <form method="post">
+    {{ csrf_token() }}
+    <div class="form-group">
+      <label>Enter MFA Code</label>
+      <input type="text" name="code" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Verify</button>
+  </form>
+</div>
+{% endblock %}

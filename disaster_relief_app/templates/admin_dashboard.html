@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="mt-5">
+  <h2>Admin Dashboard</h2>
+  
+  <h3>User Role Distribution</h3>
+  {% if users|length > 0 %}
+    {% for role, count in role_counts.items() %}
+      <div class="mb-2">
+        <strong>{{ role }}:</strong> {{ count }} users
+        <div class="progress">
+            <div class="progress-bar" role="progressbar"
+            style="width: (count / (users|length) * 100)|round(1) %;"
+            aria-valuenow="{{ (count / (users|length) * 100)|round(1) }}"
+            aria-valuemin="0" aria-valuemax="100">
+         {{ (count / (users|length) * 100)|round(1) }}%
+       </div>
+       
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>No users found. Cannot display role distribution.</p>
+  {% endif %}
+  
+  <hr>
+  
+  <h3>Recent Help Requests</h3>
+  {% if requests %}
+    {% for req in requests %}
+      <div class="card mb-2">
+        <div class="card-body">
+          <h5 class="card-title">{{ req.title }}</h5>
+          <p class="card-text">{{ req.description }}</p>
+          <p>Status: {{ req.status }} ({{ req.progress }}%)</p>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>No requests available.</p>
+  {% endif %}
+  
+  <hr>
+  
+  <h3>Recent Audit Logs</h3>
+  {% if logs %}
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Action</th>
+          <th>Details</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+        <tr>
+          <td>{{ log.user_id or 'N/A' }}</td>
+          <td>{{ log.action }}</td>
+          <td>{{ log.details }}</td>
+          <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No audit logs available.</p>
+  {% endif %}
+  
+  <hr>
+  
+  <h3>Send Notification</h3>
+  <form method="post" action="{{ url_for('notifications.send_notification') }}">
+    {{ csrf_token() }}
+    <div class="form-group">
+      <label>Notification Message</label>
+      <input type="text" name="message" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-warning">Send Notification</button>
+  </form>
+</div>
+{% endblock %}

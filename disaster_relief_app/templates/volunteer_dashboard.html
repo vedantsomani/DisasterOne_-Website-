@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Volunteer Dashboard{% endblock %}
+{% block content %}
+<div class="mt-5">
+  <h2>Volunteer Dashboard</h2>
+  {% for task in tasks %}
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">{{ task.title }}</h5>
+        <p class="card-text">{{ task.description }}</p>
+        <p>Status: {{ task.status }}</p>
+        {% if task.status == "Open" %}
+        <form method="post" action="{{ url_for('volunteer.accept_task', task_id=task.id) }}">
+          {{ csrf_token() }}
+          <button type="submit" class="btn btn-success">Accept Task</button>
+        </form>
+        {% else %}
+        <form method="post" action="{{ url_for('volunteer.update_task_status', task_id=task.id) }}">
+          {{ csrf_token() }}
+          <div class="form-group">
+            <label>Update Status</label>
+            <select name="status" class="form-control">
+              <option value="In Progress" {% if task.status == "In Progress" %}selected{% endif %}>In Progress</option>
+              <option value="Completed" {% if task.status == "Completed" %}selected{% endif %}>Completed</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  {% else %}
+    <p>No tasks available.</p>
+  {% endfor %}
+</div>
+{% endblock %}

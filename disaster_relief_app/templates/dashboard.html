@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="mt-5">
+  <h2>Welcome, {{ current_user.username }}</h2>
+  <a href="{{ url_for('main.create_request') }}" class="btn btn-success mb-3">Submit New Help Request</a>
+  <hr>
+  <h3>Your Help Requests</h3>
+  {% for req in requests %}
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">{{ req.title }}</h5>
+        <p class="card-text">{{ req.description }}</p>
+        
+        <!-- Progress bar -->
+        <div class="progress mb-2">
+          <div class="progress-bar"
+               role="progressbar"
+               style="width: {{ req.progress }}%;"
+               aria-valuenow="{{ req.progress }}"
+               aria-valuemin="0"
+               aria-valuemax="100">
+            {{ req.progress }}%
+          </div>
+        </div>
+        
+        <!-- Update progress form -->
+        <form method="post" action="{{ url_for('main.update_progress', request_id=req.id) }}">
+          {{ csrf_token() }}
+          <div class="form-group">
+            <label>Update Progress (%)</label>
+            <input type="number"
+                   name="progress"
+                   class="form-control"
+                   min="0"
+                   max="100"
+                   value="{{ req.progress }}"
+                   required>
+          </div>
+          <button type="submit" class="btn btn-primary">Update Progress</button>
+        </form>
+      </div>
+    </div>
+  {% else %}
+    <p>No help requests found.</p>
+  {% endfor %}
+</div>
+{% endblock %}
